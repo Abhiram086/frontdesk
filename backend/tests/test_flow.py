@@ -122,3 +122,34 @@ def test_late_report_persists_after_resolve(client, manager_token):
     assert len(breaches) >= 1
     assert breaches[0]["status"] == "resolved"
     assert "Agent 1" in breaches[0]["reason"]
+
+def test_late_report_reflects_final_overdue_after_sweep(client, manager_token):
+    # Sweeper catches a medium response 30m late, but agent replies 750m late -> report shows 750m
+    mon_0930 = at(2026, 11, 2, 9, 30)   # 270m target -> due Mon 14:00
+    mon_1430 = at(2026, 11, 2, 14, 30)  # 30m late (swept here)
+    tue_1730 = at(2026, 11, 3, 17, 30)  # 750m late (agent finally replies)
+
+    with tx() as cur:
+        agent = _agent(cur)
+        t = sv.create_ticket(
+            cur, "Maya", "maya@test", "Delayed reply", "Need help", "medium", now=mon_0930
+        )
+        sv.claim_ticket(cur, t["id"], agent, now=mon_0930)
+        tid = t["id"]
+
+    sv.run_sweep(now=mon_1430)
+
+    with tx() as cur:
+        agent = _agent(cur)
+        sv.agent_reply(
+            cur, tid, agent, "Sorry for the delay", wait_for_customer=False, now=tue_1730
+        )
+
+    res = client.get(
+        "/api/reports/late",
+        headers={"Authorization": f"Bearer {manager_token}"},
+    )
+    assert res.status_code == 200
+    breaches = [r for r in res.json() if r["ticket_id"] == tid and r["clock"] == "response"]
+    assert len(breaches) == 1
+    assert breaches[0]["late_by_min"] == 750

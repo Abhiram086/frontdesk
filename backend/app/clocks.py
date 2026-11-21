@@ -77,13 +77,26 @@ def settle(cur, c: dict, used: float, now):
         now,
     )
 
-
 def stop_clock(cur, tid: int, kind: str, now, hol: set):
     for c in open_clocks(cur, tid):
         if c["kind"] != kind:
             continue
         used = used_minutes(c, now, hol)
         settle(cur, c, used, now)
+        # If an earlier sweep already logged sla_breached, record the final overdue time on stop
+        if c["breached_at"] and used > c["target_min"]:
+            log_event(
+                cur,
+                tid,
+                "system",
+                "sla_final",
+                {
+                    "kind": kind,
+                    "target_min": c["target_min"],
+                    "late_by_min": round(used - c["target_min"]),
+                },
+                now,
+            )
         cur.execute(
             """
             UPDATE sla_clocks
@@ -92,7 +105,6 @@ def stop_clock(cur, tid: int, kind: str, now, hol: set):
             """,
             (used, now, tid, kind),
         )
-
 
 def pause_clocks(cur, tid: int, now, hol: set):
     for c in open_clocks(cur, tid):

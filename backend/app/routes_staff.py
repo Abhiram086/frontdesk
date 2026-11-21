@@ -202,11 +202,24 @@ def late_report(user: dict = Depends(manager_only)):
                    u.name AS assignee,
                    e.payload->>'kind' AS clock,
                    (e.payload->>'target_min')::int AS target_min,
-                   (e.payload->>'late_by_min')::int AS late_by_min,
+                   COALESCE(
+                       (f.payload->>'late_by_min')::int,
+                       (e.payload->>'late_by_min')::int
+                   ) AS late_by_min,
                    e.payload->>'reason' AS reason
             FROM events e
             JOIN tickets t ON t.id = e.ticket_id
             LEFT JOIN users u ON u.id = t.assignee_id
+            LEFT JOIN LATERAL (
+                SELECT payload
+                FROM events f
+                WHERE f.ticket_id = e.ticket_id
+                  AND f.type = 'sla_final'
+                  AND f.payload->>'kind' = e.payload->>'kind'
+                  AND f.id > e.id
+                ORDER BY f.id
+                LIMIT 1
+            ) f ON true
             WHERE e.type = 'sla_breached'
             ORDER BY e.at DESC
             """

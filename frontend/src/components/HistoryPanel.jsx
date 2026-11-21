@@ -27,6 +27,8 @@ function describeEvent(e) {
       return `Closed automatically (${p.reason})`;
     case "sla_breached":
       return `SLA breached (${p.kind}, late by ${p.late_by_min}m): ${p.reason}`;
+    case "sla_final":
+      return `Final SLA overdue recorded (${p.kind}, late by ${p.late_by_min}m)`;
     default:
       return e.type;
   }
