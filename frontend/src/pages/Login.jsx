@@ -34,59 +34,75 @@ export default function Login() {
   }
 
   return (
-    <div className="container narrow" style={{ marginTop: 64 }}>
-      <div className="card">
-        <h1 style={{ marginTop: 0 }}>Frontdesk Sign In</h1>
-        <p className="muted">Arvo Systems support workspace</p>
-
-        {error && <div className="error">{error}</div>}
-
-        <form onSubmit={handleSubmit}>
-          <div className="field">
-            <label>Email</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="agent1@arvo.test"
-            />
-          </div>
-          <div className="field">
-            <label>Password</label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <button className="btn btn-primary" disabled={busy}>
-            {busy ? "Signing in..." : "Sign in"}
-          </button>
-        </form>
-
-        <hr style={{ margin: "20px 0", border: "none", borderTop: "1px solid var(--border)" }} />
-
-        <div className="muted" style={{ fontSize: "0.85rem" }}>
-          <strong>Demo accounts</strong> (password: <code>Frontdesk@123</code>):
-          <div className="row" style={{ marginTop: 8 }}>
-            <button type="button" className="btn btn-sm" onClick={() => fill("meera@arvo.test")}>
-              Fill Manager (Meera)
-            </button>
-            <button type="button" className="btn btn-sm" onClick={() => fill("agent1@arvo.test")}>
-              Fill Agent 1
-            </button>
-            <button type="button" className="btn btn-sm" onClick={() => fill("agent2@arvo.test")}>
-              Fill Agent 2
-            </button>
-          </div>
-        </div>
-
-        <p style={{ marginTop: 16, marginBottom: 0 }}>
-          Are you a customer? <Link to="/portal">Open Customer Portal →</Link>
+    <div className="login-split">
+      <section className="login-brand">
+        <span className="logo-mark logo-mark-lg">F</span>
+        <h1>Frontdesk</h1>
+        <p style={{ fontSize: "1.05rem", margin: "0 0 12px", fontWeight: 500 }}>
+          Support. Resolve. Delight.
         </p>
-      </div>
+        <p className="muted" style={{ maxWidth: 320, margin: 0 }}>
+          Arvo Systems support ticket management with working-hours SLA tracking.
+        </p>
+      </section>
+
+      <section className="login-panel">
+        <div className="login-card">
+          <h2 style={{ margin: "0 0 4px" }}>Sign In</h2>
+          <p className="muted" style={{ margin: "0 0 22px" }}>
+            Welcome back! Please sign in to continue.
+          </p>
+
+          {error && <div className="error">{error}</div>}
+
+          <form onSubmit={handleSubmit}>
+            <div className="field">
+              <label>Email</label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="agent1@arvo.test"
+              />
+            </div>
+            <div className="field">
+              <label>Password</label>
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+              />
+            </div>
+            <button className="btn btn-primary btn-full" disabled={busy}>
+              {busy ? "Signing in..." : "Sign In"}
+            </button>
+          </form>
+
+          <hr style={{ margin: "22px 0", border: "none", borderTop: "1px solid var(--border)" }} />
+
+          <div className="muted" style={{ fontSize: "0.8rem" }}>
+            <strong>Demo logins</strong> (password: <code>Frontdesk@123</code>)
+            <div className="row" style={{ marginTop: 8, gap: 6 }}>
+              <button type="button" className="btn btn-sm" onClick={() => fill("meera@arvo.test")}>
+                Meera (Manager)
+              </button>
+              <button type="button" className="btn btn-sm" onClick={() => fill("agent1@arvo.test")}>
+                Agent 1
+              </button>
+              <button type="button" className="btn btn-sm" onClick={() => fill("agent2@arvo.test")}>
+                Agent 2
+              </button>
+            </div>
+          </div>
+
+          <p style={{ marginTop: 18, marginBottom: 0, fontSize: "0.86rem" }}>
+            Need to raise a ticket? <Link to="/portal" style={{ fontWeight: 600 }}>Open Customer Portal →</Link>
+          </p>
+        </div>
+      </section>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../api";
 import { ist } from "../format";
 
@@ -33,46 +33,27 @@ function describeEvent(e) {
 }
 
 export default function HistoryPanel({ ticketId, refreshKey }) {
-  const [open, setOpen] = useState(false);
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  async function toggle() {
-    const next = !open;
-    setOpen(next);
-    if (next) {
-      setLoading(true);
-      try {
-        setEvents(await api(`/tickets/${ticketId}/events`));
-      } finally {
-        setLoading(false);
-      }
-    }
-  }
+  useEffect(() => {
+    setLoading(true);
+    api(`/tickets/${ticketId}/events`)
+      .then(setEvents)
+      .finally(() => setLoading(false));
+  }, [ticketId, refreshKey]);
+
+  if (loading) return <p className="muted">Loading audit history...</p>;
 
   return (
-    <section className="card history-panel">
-      <button type="button" className="btn btn-sm" onClick={toggle}>
-        {open ? "Hide" : "Show"} Audit History
-      </button>
-
-      {open && (
-        <div className="history-list" data-refresh={refreshKey}>
-          {loading ? (
-            <p className="muted">Loading history...</p>
-          ) : (
-            <ul>
-              {events.map((e) => (
-                <li key={e.id}>
-                  <span className="history-time">{ist(e.at)}</span>
-                  <span className="history-actor">{e.actor}</span>
-                  <span>{describeEvent(e)}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
-    </section>
+    <ul className="history-list">
+      {events.map((e) => (
+        <li key={e.id}>
+          <span className="history-time">{ist(e.at)}</span>
+          <span className="history-actor">{e.actor}</span>
+          <span>{describeEvent(e)}</span>
+        </li>
+      ))}
+    </ul>
   );
 }
