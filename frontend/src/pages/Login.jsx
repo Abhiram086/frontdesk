@@ -94,10 +94,12 @@ export default function Login() {
               </button>
               <button type="button" className="btn btn-sm" onClick={() => fill("agent2@arvo.test")}>
                 Agent 2
-              </button>
+             </button>
+            </div>
+            <div style={{ marginTop: 8 }}>
+              All 9 agents are added: <code>agent1@arvo.test</code> – <code>agent9@arvo.test</code> for test purposes
             </div>
           </div>
-
           <p style={{ marginTop: 18, marginBottom: 0, fontSize: "0.86rem" }}>
             Need to raise a ticket? <Link to="/portal" style={{ fontWeight: 600 }}>Open Customer Portal →</Link>
           </p>

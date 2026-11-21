@@ -1,16 +1,28 @@
-# React + Vite
+# Frontdesk — Support Ticket System (Arvo Systems)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+**Live URL:** `<YOUR-RENDER-URL>`
+**Customer Portal:** `<YOUR-RENDER-URL>/portal`
+**Repository:** `https://github.com/Abhiram086/frontdesk`
 
-Currently, two official plugins are available:
+### Demo Accounts (Password for all: `Frontdesk@123`)
+- **Manager (Meera):** `meera@arvo.test`
+- **Support Agents (9 seeded):** `agent1@arvo.test` through `agent9@arvo.test`
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## What It Is
+Frontdesk replaces Arvo Systems' shared spreadsheet and WhatsApp workflow with a full-stack support ticket system featuring working-hours SLA tracking, atomic ticket claiming, strict internal-note isolation, and an append-only audit trail.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Architecture
+- **Backend:** Python 3.12 + FastAPI + `psycopg` 3 (plain SQL, no ORM, explicit row locks & triggers).
+- **Database:** PostgreSQL 16 (`timestamptz` for all timestamps, `JSONB` for audit event payloads).
+- **Frontend:** React 18 + Vite + `react-router-dom`, compiled into static assets and served directly by FastAPI (single URL, no CORS).
+- **Background Sweeper:** Runs every 60 seconds inside FastAPI's lifespan task to auto-close silent/expired tickets and permanently record SLA breaches.
 
-## Expanding the Oxlint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## How to Run Locally
+
+### 1. Start PostgreSQL 16 (Docker)
+```bash
+docker run -d --name fd-db -p 5432:5432 -e POSTGRES_PASSWORD=pw -e POSTGRES_DB=frontdesk postgres:16
