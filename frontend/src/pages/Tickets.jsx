@@ -36,12 +36,14 @@ export default function Tickets() {
     }
   }, [view]);
 
-  useEffect(() => {
+useEffect(() => {
     setLoading(true);
     setStatusFilter("all");
     setError("");
     load();
-    const id = setInterval(load, 30000);
+    const id = setInterval(() => {
+      if (document.visibilityState === "visible") load();
+    }, 5000);
     return () => clearInterval(id);
   }, [load]);
 

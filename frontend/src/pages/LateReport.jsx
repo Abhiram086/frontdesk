@@ -13,13 +13,20 @@ export default function LateReport() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    api("/reports/late")
-      .then(setRows)
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, []);
+useEffect(() => {
+    const load = () =>
+      api("/reports/late")
+        .then(setRows)
+        .catch((err) => setError(err.message))
+        .finally(() => setLoading(false));
 
+    load();
+    const id = setInterval(() => {
+      if (document.visibilityState === "visible") load();
+    }, 5000);
+    return () => clearInterval(id);
+  }, []);
+  
   const filtered = priority === "all" ? rows : rows.filter((r) => r.priority === priority);
   const byClock = {
     response: filtered.filter((r) => r.clock === "response").length,
