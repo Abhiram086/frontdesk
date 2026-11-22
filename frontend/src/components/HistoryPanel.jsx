@@ -45,8 +45,7 @@ export default function HistoryPanel({ ticketId, refreshKey }) {
       .finally(() => setLoading(false));
   }, [ticketId, refreshKey]);
 
-  if (loading) return <p className="muted">Loading audit history...</p>;
-
+if (loading && events.length === 0) return <p className="muted">Loading audit history...</p>;
   return (
     <ul className="history-list">
       {events.map((e) => (

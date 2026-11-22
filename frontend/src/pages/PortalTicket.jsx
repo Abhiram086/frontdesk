@@ -30,6 +30,10 @@ export default function PortalTicket() {
 
   useEffect(() => {
     load();
+    const id = setInterval(() => {
+      if (document.visibilityState === "visible") load();
+    }, 5000);
+    return () => clearInterval(id);
   }, [load]);
 
   async function sendReply(e) {

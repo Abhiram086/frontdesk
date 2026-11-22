@@ -36,6 +36,10 @@ export default function TicketDetail() {
 
   useEffect(() => {
     load();
+    const id = setInterval(() => {
+      if (document.visibilityState === "visible") load();
+    }, 5000);
+    return () => clearInterval(id);
   }, [load]);
 
   async function runAction(fn) {
