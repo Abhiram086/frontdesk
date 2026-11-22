@@ -20,7 +20,7 @@ A support ticket system for the fictional company Arvo Systems, built for the iN
 | Manager | `meera@arvo.test` |
 | Agents | `agent1@arvo.test` to `agent9@arvo.test` |
 
-## Quick tour (5 minutes)
+## Quick tour
 
 1. Open `/portal` and raise a **critical** ticket. Copy the private link it gives you.
 2. Log in as `agent1`, open **Unassigned**, click **Take**. A second agent cannot take the same ticket.
@@ -124,9 +124,6 @@ Where the brief left gaps, these are the choices made:
 - **Late is calculated live on every screen**, and each breach is also stored permanently so reports survive resolution.
 - **Holidays are sample data** in an editable table, since no official list was given.
 
-## What is not included
-
-Email in and out, ticket reassignment, admin screens for staff and holidays, password reset, pagination, file attachments, CSV export, and frontend automated tests. The time went into the SLA engine, concurrency safety and data isolation. A hash chain on the audit log would also make tampering detectable by a database administrator; today, triggers block all changes made through the application.
 
 ---
 
@@ -174,8 +171,6 @@ python seed.py
 uvicorn app.main:app --reload --port 8000
 ```
 
-If PowerShell blocks the activate script, run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once and try again.
-
 The API is now at http://localhost:8000 (docs at `/docs`).
 
 ### 3. Frontend (second terminal, same on both systems)
@@ -188,13 +183,3 @@ npm run dev
 
 Open http://localhost:5173. It forwards `/api` calls to the backend on port 8000.
 
-### 4. Tests (optional)
-
-With the backend environment active and the database running:
-
-```bash
-cd backend
-python -m pytest -v
-```
-
-The tests use a separate `frontdesk_test` database, so your demo data is not touched.
